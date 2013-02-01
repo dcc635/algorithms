@@ -8,7 +8,7 @@ def insertion_sort(B):
     []
     """
     A = B[:]
-    for j in range(2, len(A)):
+    for j in range(1, len(A)):
         key = A[j]
         i = j - 1
         while i >= 0 and A[i] > key:
@@ -16,6 +16,7 @@ def insertion_sort(B):
             i -= 1
         A[i + 1] = key
     return A
+
 
 def merge(A, B):
     """Merge two lists in order:
@@ -46,6 +47,18 @@ def merge(A, B):
     return C
 
 
-
 def merge_sort(B):
-    pass
+    """Merge two lists in order:
+
+    >>> merge_sort([5, 4, 3, 2, 1])
+    [1, 2, 3, 4, 5]
+
+    >>> merge_sort([])
+    []
+    """
+    if len(B)>1:
+        a = merge_sort(B[:len(B)//2])
+        b = merge_sort(B[len(B)//2:])
+        return merge(a, b)
+    else:
+        return B
