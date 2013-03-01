@@ -19,11 +19,17 @@ struct hashtable{
 };
 typedef struct hashtable Hashtable;
 
-void hash_init(Hashtable *myhash){
+void hashnode_init(Hashnode *mynode){
+    memset(mynode->key, 0, MAX_STR_LEN);
+    mynode->value = -1;
+    mynode->next = NULL;
+    mynode->prev = NULL;
+}
+
+void hashtable_init(Hashtable *myhash){
     int i;
-    Hashnode mynode = { "", -1, NULL, NULL };
     for (i = 0; i < TABLE_LENGTH; i++){
-        myhash->table[i] = mynode;
+        hashnode_init(&(myhash->table[i]));
     }
 }
 
@@ -40,26 +46,49 @@ int hash_function(char *key){
 void hash_insert(Hashtable *myhash, char *key, int value){
     int i = hash_function(key);
     Hashnode newnode;
+    hashnode_init(&newnode);
     strcpy(newnode.key, key);
     newnode.value = value;
     myhash->table[i] = newnode;
+    printf("Inserted entry \"%s\" with value %d.\n", key, value);
 }
     
 int hash_search(Hashtable *myhash, char *key){
     int i = hash_function(key);
-    return (myhash->table[i]).value;
+    int value = (myhash->table[i]).value;
+    return value;
+}
+
+void hash_delete(Hashtable *myhash, char *key){
+    int i = hash_function(key);
+    hashnode_init(&(myhash->table[i]));
+    printf("Deleted entry \"%s\".\n", key);
+}
+
+void print_entry(Hashtable *myhash, char *key){
+    int age = hash_search(myhash, key);
+    if (-1 == age){
+        printf("Entry \"%s\" not found.\n", key);
+    }
+    else {
+        printf("%s's age: %d\n", key, age);
+    }
 }
 
 int main(void){
     Hashtable myhash;
-    hash_init(&myhash);
-    hash_insert(&myhash, "tim", 27);
-    hash_insert(&myhash, "james", 24);
-    hash_insert(&myhash, "dan", 23);
+    hashtable_init(&myhash);
+    hash_insert(&myhash, "Tim", 27);
+    hash_insert(&myhash, "James", 24);
+    hash_insert(&myhash, "Dan", 23);
 //    printf("Dan's age: %d", hash_search(&myhash, "dan"));
-    printf("Tim's age: %d\n", hash_search(&myhash, "tim"));
-    printf("Dan's age: %d\n", hash_search(&myhash, "dan"));
-    printf("James' age: %d\n", hash_search(&myhash, "james"));
-//    hash_delete(&myhash, "james");
-//    printf("James' age: %d", hash_search(&myhash, "james"));
+    print_entry(&myhash, "Tim");
+    print_entry(&myhash, "Dan");
+    print_entry(&myhash, "James");
+//    printf("Tim's age: %d\n", hash_search(&myhash, "tim"));
+//    printf("Dan's age: %d\n", hash_search(&myhash, "dan"));
+//    printf("James' age: %d\n", hash_search(&myhash, "james"));
+    hash_delete(&myhash, "James");
+    print_entry(&myhash, "James");
+//    printf("James' age: %d\n", hash_search(&myhash, "james"));
 }
